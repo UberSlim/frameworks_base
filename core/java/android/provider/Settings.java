@@ -3774,15 +3774,19 @@ public final class Settings {
         public static final String RECENTS_MAX_APPS = "recents_max_apps";
 
         /**
+         * Display second in the Clock
+         * @hide
+         */
+        public static final String CLOCK_USE_SECOND = "clock_use_second";
+
+        /**
          * Whether recent panel gravity is left or right (default = Gravity.RIGHT).
          * @hide
          */
         public static final String RECENT_PANEL_GRAVITY = "recent_panel_gravity";
 
         /**
-
          * Size of recent panel view in percent (default = 100).
-
          * Style of clock
          * 0 - Hide Clock
          * 1 - Right Clock
