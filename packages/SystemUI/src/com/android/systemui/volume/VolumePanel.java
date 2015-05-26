@@ -457,7 +457,7 @@ public class VolumePanel extends Handler implements DemoMode {
         } else {
             mDialog = null;
             mView = LayoutInflater.from(mContext).inflate(
-                    com.android.systemui.R.layout.volume_panel, parent, false);
+                    com.android.systemui.R.layout.volume_panel_qs, parent, false);
         }
 
         mPanel = (ViewGroup) mView.findViewById(com.android.systemui.R.id.visible_panel);
@@ -486,6 +486,35 @@ public class VolumePanel extends Handler implements DemoMode {
         final boolean masterVolumeOnly = res.getBoolean(R.bool.config_useMasterVolume);
         final boolean masterVolumeKeySounds = res.getBoolean(R.bool.config_useVolumeKeySounds);
         mPlayMasterStreamTones = masterVolumeOnly && masterVolumeKeySounds;
+
+        mSliderPanelExpand = (LinearLayout) mView.findViewById(
+                com.android.systemui.R.id.slider_panel_expand);
+        mExpandPanel = (ImageView) mView.findViewById(com.android.systemui.R.id.arrow);
+        if (mExpandPanel != null) {
+            mExpandPanel.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mExtendedPanelExpanded) {
+                        hideVolumePanel();
+                    } else {
+                        expandVolumePanel();
+                    }
+                    updateZenPanelVisible();
+                    mExpandPanel.setRotation(mExtendedPanelExpanded ? 180 : 0);
+                    Settings.System.putInt(mContext.getContentResolver(),
+                            Settings.System.VOLUME_PANEL_EXPANDED, mExtendedPanelExpanded ? 1 : 0);
+                    resetTimeout();
+                }
+            });
+            mExpandPanel.setRotation(mExtendedPanelExpanded ? 180 : 0);
+        } else {
+            mExtendedPanelExpanded = true;
+            createSliders();
+            expandVolumePanel();
+            updateZenPanelVisible();
+        }
+
+        mSliderPanelExpand.setGravity(Gravity.TOP);
 
         registerReceiver();
 
