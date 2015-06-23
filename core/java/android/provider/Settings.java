@@ -3686,6 +3686,12 @@ public final class Settings {
         public static final String STATUS_BAR_SHOW_NETWORK_ACTIVITY = "status_bar_show_network_activity";
 
         /**
+         * Disable Transition animations of the android system
+         * @hide
+         */
+        public static final String DISABLE_TRANSITION_ANIMATIONS = "disable_transition_animations";
+
+        /**
          * Whether to use slim recents
          * @hide
          */
