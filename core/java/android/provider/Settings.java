@@ -2137,6 +2137,13 @@ public final class Settings {
         public static final String QS_SMART_PULLDOWN = "qs_smart_pulldown";
 
         /**
+        * Whether to enable ticker animation
+        *
+        * @hide
+        */
+       public static final String TICKER_ENABLED = "ticker_enabled";
+
+        /**
          * Whether to control brightness from status bar
          *
          * @hide
@@ -2163,6 +2170,13 @@ public final class Settings {
          */
         @Deprecated
         public static final String QS_USE_MAIN_TILES = "sysui_qs_main_tiles";
+
+        /**
+         * Defines global heads up enable/disable switch.
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_GLOBAL_SWITCH = "heads_up_global_switch";
 
         /**
          * Defines global heads up snooze time if user want to snooze it.
