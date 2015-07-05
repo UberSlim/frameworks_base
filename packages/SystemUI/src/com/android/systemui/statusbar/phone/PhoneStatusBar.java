@@ -257,11 +257,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private static final int BRIGHTNESS_CONTROL_LONG_PRESS_TIMEOUT = 750; // ms
     private static final int BRIGHTNESS_CONTROL_LINGER_THRESHOLD = 20;
 
-    public static final int FADE_KEYGUARD_START_DELAY = 100;
-    public static final int FADE_KEYGUARD_DURATION = 300;
+    public static final int FADE_KEYGUARD_START_DELAY = 50;
+    public static final int FADE_KEYGUARD_DURATION = 150;
 
     /** Allow some time inbetween the long press for back and recents. */
-    private static final int LOCK_TO_APP_GESTURE_TOLERENCE = 2000;
+    private static final int LOCK_TO_APP_GESTURE_TOLERENCE = 1000;
 
     PhoneStatusBarPolicy mIconPolicy;
 
@@ -844,7 +844,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         observer.observe();
 
         // Lastly, call to the icon policy to install/update all the icons.
-        mIconPolicy = new PhoneStatusBarPolicy(mContext, mCastController, mSuController);
+        mIconPolicy = new PhoneStatusBarPolicy(mContext, mCastController, mHotspotController, mSuController);
         mSettingsObserver.onChange(false); // set up
 
         // If system disabled system wide notification alert
@@ -2053,6 +2053,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     - mCarrierLabelHeight - mStatusBarHeaderHeight)
             && mStackScroller.getVisibility() == View.VISIBLE
             && mState != StatusBarState.KEYGUARD;
+
+            if (mState == StatusBarState.KEYGUARD) {
+                // The subs are already displayed on the top bar
+                mSubsLabel.setVisibility(View.INVISIBLE);
+            } else {
+                mSubsLabel.setVisibility(View.VISIBLE);
+            }
         } else {
             makeVisible =
             !(emergencyCallsShownElsewhere && mNetworkController.isEmergencyOnly())
@@ -2076,7 +2083,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 .alpha(makeVisible ? 1f : 0f)
                 //.setStartDelay(makeVisible ? 500 : 0)
                 //.setDuration(makeVisible ? 750 : 100)
-                .setDuration(150)
+                .setDuration(100)
                 .setListener(makeVisible ? null : new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -2337,7 +2344,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                                 + mBackdropBack.getDrawable());
                     }
                     mBackdropFront.animate()
-                            .setDuration(250)
+                            .setDuration(150)
                             .alpha(0f).withEndAction(mHideBackdropFront);
                 }
             }
@@ -2526,7 +2533,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         v.animate()
                 .alpha(0f)
-                .setDuration(160)
+                .setDuration(100)
                 .setStartDelay(0)
                 .setInterpolator(ALPHA_OUT)
                 .withEndAction(new Runnable() {
@@ -2549,9 +2556,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         v.animate()
                 .alpha(1f)
-                .setDuration(320)
+                .setDuration(250)
                 .setInterpolator(ALPHA_IN)
-                .setStartDelay(50)
+                .setStartDelay(15)
 
                 // We need to clean up any pending end action from animateStatusBarHide if we call
                 // both hide and show in the same frame before the animation actually gets started.
@@ -2815,8 +2822,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     final TimeInterpolator mAccelerateInterpolator = new AccelerateInterpolator();
     final TimeInterpolator mDecelerateInterpolator = new DecelerateInterpolator();
-    final int FLIP_DURATION_OUT = 125;
-    final int FLIP_DURATION_IN = 225;
+    final int FLIP_DURATION_OUT = 65;
+    final int FLIP_DURATION_IN = 125;
     final int FLIP_DURATION = (FLIP_DURATION_IN + FLIP_DURATION_OUT);
 
     Animator mScrollViewAnim, mClearButtonAnim;

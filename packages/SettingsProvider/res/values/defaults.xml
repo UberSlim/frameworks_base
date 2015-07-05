@@ -37,7 +37,7 @@
 
     <bool name="def_bluetooth_on">false</bool>
     <bool name="def_wifi_display_on">false</bool>
-    <bool name="def_install_non_market_apps">false</bool>
+    <bool name="def_install_non_market_apps">true</bool>
     <bool name="def_package_verifier_enable">true</bool>
     <!-- Comma-separated list of location providers.
          Network location is off by default because it requires
@@ -153,7 +153,7 @@
     <integer name="def_download_manager_recommended_max_bytes_over_mobile">-1</integer>
 
     <!-- Default for Settings.Secure.LONG_PRESS_TIMEOUT_MILLIS -->
-    <integer name="def_long_press_timeout_millis">500</integer>
+    <integer name="def_long_press_timeout_millis">400</integer>
 
     <!-- Default for Settings.System.POINTER_SPEED -->
     <integer name="def_pointer_speed">0</integer>
@@ -206,7 +206,7 @@
     <string name="def_device_name_simple">%1$s</string>
 
     <!-- Default for Settings.Secure.WAKE_GESTURE_ENABLED -->
-    <bool name="def_wake_gesture_enabled">true</bool>
+    <bool name="def_wake_gesture_enabled">false</bool>
 
     <!-- Default for Settings.Global.GUEST_USER_ENABLED -->
     <bool name="def_guest_user_enabled">true</bool>
