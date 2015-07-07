@@ -3863,7 +3863,7 @@ public final class Settings {
          */
         public static final String LIVE_DISPLAY_HINTED = "live_display_hinted";
 
-        /**
+	/**
          * Enable looking up of phone numbers of nearby places
          *
          * @hide
@@ -3914,10 +3914,15 @@ public final class Settings {
 
         /**
          * The OpenCNAM authentication token
-         *
          * @hide
          */
         public static final String DIALER_OPENCNAM_AUTH_TOKEN = "dialer_opencnam_auth_token";
+
+        /**
+         * Toast Animations
+         * @hide
+         */
+        public static final String TOAST_ANIMATION = "toast_animation";
 
         /**
    * Network traffic indicator, goes from least to greatest significant bitwise
