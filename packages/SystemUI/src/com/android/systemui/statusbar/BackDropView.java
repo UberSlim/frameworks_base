@@ -133,9 +133,6 @@ public class BackDropView extends FrameLayout {
             @Override
             public void onPlayStateChanged(boolean playing) {
                 if (playing) {
-                    if (mVisualizerColorAnimator != null && !mVisualizerColorAnimator.isStarted()) {
-                        mVisualizerColorAnimator.start();
-                    }
                     requestVisualizer(true, 500);
                 } else {
                     requestVisualizer(false, 0);
