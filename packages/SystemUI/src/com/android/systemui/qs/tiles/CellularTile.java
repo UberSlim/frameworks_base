@@ -75,16 +75,16 @@ public class CellularTile extends QSTile<QSTile.SignalState> {
 
     @Override
     protected void handleClick() {
-        if (mController.isMobileDataSupported()) {
-            showDetail(true);
-        } else {
-            mHost.startSettingsActivity(DATA_USAGE_SETTINGS);
-        }
+        mDataController.setMobileDataEnabled(!mDataController.isMobileDataEnabled());
     }
 
     @Override
     protected void handleLongClick() {
-        mHost.startSettingsActivity(CELLULAR_SETTINGS);
+        if (mDataController.isMobileDataSupported()) {
+            showDetail(true);
+        } else {
+            mHost.startSettingsActivity(CELLULAR_SETTINGS);
+        }
     }
 
     @Override
