@@ -270,8 +270,7 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
         mKgUpdateMonitor.reportSimUnlocked(mSubId);
         mCallback.dismiss(true);
         mShowDefaultMessage = true;
-        // Animate the transition in case we have a second PIN to enter
-        reset(true);
+        reset();
     }
 
     @Override
