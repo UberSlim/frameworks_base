@@ -38,6 +38,7 @@ import android.widget.GridLayout;
 import android.widget.TextClock;
 import android.widget.TextView;
 
+import com.android.internal.util.slim.ImageHelper;
 import com.android.internal.widget.LockPatternUtils;
 
 import java.util.Locale;
