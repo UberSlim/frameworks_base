@@ -72,7 +72,7 @@ public class VisualizerTile extends QSTile<QSTile.State>
             if (PowerManager.ACTION_POWER_SAVE_MODE_CHANGING.equals(intent.getAction())) {
                 mPowerSaveModeEnabled = intent.getBooleanExtra(PowerManager.EXTRA_POWER_SAVE_MODE,
                         false);
-                checkIfPlaying(null);
+                checkIfPlaying();
             }
         }
     };
@@ -215,11 +215,9 @@ public class VisualizerTile extends QSTile<QSTile.State>
         mContext.unregisterReceiver(mReceiver);
     }
 
-    private void checkIfPlaying(PlaybackState newState) {
-        boolean anythingPlaying = newState == null
-                ? mIsAnythingPlaying
-                : newState.getState() == PlaybackState.STATE_PLAYING;
-        if (!mPowerSaveModeEnabled && !anythingPlaying) {
+    private void checkIfPlaying() {
+        boolean anythingPlaying = false;
+        if (!mPowerSaveModeEnabled) {
             for (Map.Entry<MediaSession.Token, CallbackInfo> entry : mCallbacks.entrySet()) {
                 if (entry.getValue().isPlaying()) {
                     anythingPlaying = true;
@@ -227,7 +225,6 @@ public class VisualizerTile extends QSTile<QSTile.State>
                 }
             }
         }
-
         if (anythingPlaying != mIsAnythingPlaying) {
             mIsAnythingPlaying = anythingPlaying;
             if (mIsAnythingPlaying && !mLinked) {
@@ -317,13 +314,13 @@ public class VisualizerTile extends QSTile<QSTile.State>
                 @Override
                 public void onSessionDestroyed() {
                     destroy();
-                    checkIfPlaying(null);
+                    checkIfPlaying();
                 }
 
                 @Override
                 public void onPlaybackStateChanged(@NonNull PlaybackState state) {
                     mIsPlaying = state.getState() == PlaybackState.STATE_PLAYING;
-                    checkIfPlaying(state);
+                    checkIfPlaying();
                 }
             };
             controller.registerCallback(mCallback);
