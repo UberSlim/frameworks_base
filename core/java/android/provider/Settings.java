@@ -6237,13 +6237,6 @@ public final class Settings {
         public static final String LIVE_DISPLAY_COLOR_MATRIX = "live_display_color_matrix";
 
         /**
-         * Whether to show the lockscreen visualizer.
-         * 0 will disable it, anything else will enable it. Default is on.
-         * @hide
-         */
-        public static final String LOCKSCREEN_VISUALIZER_ENABLED = "lockscreen_visualizer";
-
-        /**
          * Performance profile
          * @see config_perf_profile_prop in frameworks/base/core/res/res/values/config.xml
          * @hide
