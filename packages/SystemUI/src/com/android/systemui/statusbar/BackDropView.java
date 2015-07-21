@@ -29,6 +29,8 @@ import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.session.PlaybackState;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -326,14 +328,11 @@ public class BackDropView extends FrameLayout {
                 }
             };
 
-    private class LockscreenBarEqRenderer extends Renderer {
+    private static class LockscreenBarEqRenderer extends Renderer {
         private int mDivisions;
         private Paint mPaint;
         private int mDbFuzz;
         private int mDbFuzzFactor;
-
-        private boolean mDrawEmpty;
-        int mFramesSinceLastEmptyRender;
 
         /**
          * Renders the FFT data as a series of lines, in histogram form
@@ -362,54 +361,20 @@ public class BackDropView extends FrameLayout {
 
         @Override
         public void onRender(Canvas canvas, FFTData data, Rect rect) {
-            if (isDataEmpty(data)) {
-                mDrawEmpty = true;
-                mFramesSinceLastEmptyRender = 0;
-            } else {
-                mFramesSinceLastEmptyRender++;
-                for (int i = 0; i < data.bytes.length / mDivisions; i++) {
-                    mFFTPoints[i * 4] = i * 4 * mDivisions;
-                    mFFTPoints[i * 4 + 2] = i * 4 * mDivisions;
-                    byte rfk = data.bytes[mDivisions * i];
-                    byte ifk = data.bytes[mDivisions * i + 1];
-                    float magnitude = (rfk * rfk + ifk * ifk);
-                    int dbValue = magnitude > 0 ? (int) (10 * Math.log10(magnitude)) : 0;
+            for (int i = 0; i < data.bytes.length / mDivisions; i++) {
+                mFFTPoints[i * 4] = i * 4 * mDivisions;
+                mFFTPoints[i * 4 + 2] = i * 4 * mDivisions;
+                byte rfk = data.bytes[mDivisions * i];
+                byte ifk = data.bytes[mDivisions * i + 1];
+                float magnitude = (rfk * rfk + ifk * ifk);
+                int dbValue = magnitude > 0 ? (int) (10 * Math.log10(magnitude)) : 0;
 
-                    mFFTPoints[i * 4 + 1] = rect.height();
-                    mFFTPoints[i * 4 + 3] = rect.height() - ((dbValue * mDbFuzzFactor) + mDbFuzz);
-                }
+                mFFTPoints[i * 4 + 1] = rect.height();
+                mFFTPoints[i * 4 + 3] = rect.height() - ((dbValue * mDbFuzzFactor) + mDbFuzz);
             }
 
-             /*
-              * When transitioning songs, we get a bunch of empty frames, followed by 1 frame
-              * as the track switch occurs, then some more empty frames until the song starts.
-              *
-              * We skip the first frame in between empty frames here to avoid drawing
-              * anything when we're switching songs
-              */
-            mDrawEmpty = mFramesSinceLastEmptyRender == 1;
-
-            if (mFramesSinceLastEmptyRender == 1) {
-                //
-                mDrawEmpty = true;
-            }
-            if (mDrawEmpty) {
-                mVisualizer.setDrawingEnabled(false);
-            } else {
-                mVisualizer.setDrawingEnabled(true);
-                canvas.drawLines(mFFTPoints, mPaint);
-            }
+            canvas.drawLines(mFFTPoints, mPaint);
         }
-
-        private boolean isDataEmpty(FFTData data) {
-            for (int i = 0; i < data.bytes.length; i++) {
-                if (data.bytes[i] != 0) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
     }
 
     private class SettingsObserver extends UserContentObserver {
