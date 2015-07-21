@@ -349,9 +349,7 @@ public class BackDropView extends FrameLayout {
                 @Override
                 public void onScreenTurnedOn() {
                     mScreenOn = true;
-                    if (mHandler != null) {
-                        mHandler.postDelayed(mResumeVisualizerIfPlayingRunnable, 200);
-                    }
+                    mHandler.postDelayed(mResumeVisualizerIfPlayingRunnable, 200);
                 }
 
                 @Override
