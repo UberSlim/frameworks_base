@@ -4711,7 +4711,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return !mNotificationData.getActiveNotifications().isEmpty();
     }
 
-    public void requestVisualizer(Boolean show, int delay) {
+    public void requestVisualizer(boolean show, int delay) {
         mBackdrop.requestVisualizer(show, delay);
     }
 

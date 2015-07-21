@@ -16,7 +16,8 @@
 
 package com.android.systemui.statusbar;
 
-import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -30,7 +31,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.PowerManager;
 import android.os.UserHandle;
 import android.provider.Settings;
@@ -74,23 +74,46 @@ public class BackDropView extends FrameLayout {
     private boolean mTouching;
     private MediaMonitor mMediaMonitor;
     private Handler mHandler;
-    private boolean mAnimatingOn;
+    private LockscreenBarEqRenderer mBarRenderer;
+    private ValueAnimator mVisualizerColorAnimator;
 
     public BackDropView(Context context) {
         super(context);
+        init();
     }
 
     public BackDropView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public BackDropView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
     public BackDropView(Context context, AttributeSet attrs, int defStyleAttr,
                         int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init();
+    }
+
+    private void init() {
+        mHandler = new Handler();
+        mMediaMonitor = new MediaMonitor(mContext) {
+            @Override
+            public void onPlayStateChanged(boolean playing) {
+                if (playing) {
+                    if (mVisualizerColorAnimator != null && !mVisualizerColorAnimator.isStarted()) {
+                        mVisualizerColorAnimator.start();
+                    }
+                    requestVisualizer(true, 500);
+                } else {
+                    // user paused, hide visualizer to stop flash
+                    requestVisualizer(false, 0);
+                }
+            }
+        };
     }
 
     @Override
@@ -124,31 +147,10 @@ public class BackDropView extends FrameLayout {
             mSettingsObserver = new SettingsObserver(new Handler());
         }
         mSettingsObserver.observe();
-
-        HandlerThread handlerThread = new HandlerThread(TAG,
-                android.os.Process.THREAD_PRIORITY_BACKGROUND);
-        handlerThread.start();
-        mHandler = new Handler(handlerThread.getLooper());
-        mMediaMonitor = new MediaMonitor(mContext) {
-            @Override
-            public void onPlayStateChanged(boolean playing) {
-                if (playing) {
-                    requestVisualizer(true, 500);
-                } else {
-                    requestVisualizer(false, 0);
-                }
-            }
-        };
-        mMediaMonitor.setListening(true);
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        mMediaMonitor.setListening(false);
-        haltVisualizer();
-        mHandler.getLooper().quit();
-        mHandler = null;
-
         super.onDetachedFromWindow();
         mSettingsObserver.unobserve();
         mContext.unregisterReceiver(mReceiver);
@@ -181,8 +183,8 @@ public class BackDropView extends FrameLayout {
     }
 
     public void setTouching(boolean touching) {
+        if (DEBUG) Log.d(TAG, "setTouching() called with " + "touching = [" + touching + "]");
         if (mTouching != touching) {
-            if (DEBUG) Log.d(TAG, "setTouching() called with touching = [" + touching + "]");
             mTouching = touching;
             if (mTouching) {
                 // immediately hide visualizer
@@ -194,44 +196,25 @@ public class BackDropView extends FrameLayout {
         }
     }
 
-    /**
-     * Show or hide the visualizer
-     *
-     * @param show True to request visualizer to be visible, false to hide it.
-     *             request may not happen based on other conditions.
-     *             Pass null to decisively pick one, or the other, based on the current state.
-     * @param delay How long to wait before doing the requested action.
-     */
-    public void requestVisualizer(Boolean show, int delay) {
+    public void requestVisualizer(boolean show, int delay) {
         if (mVisualizer == null || !mVisualizerEnabled || mPowerSaveModeEnabled) {
             return;
         }
         mHandler.removeCallbacks(mStartVisualizer);
         mHandler.removeCallbacks(mStopVisualizer);
-
         if (DEBUG) Log.v(TAG, "requestVisualizer(show: " + show + ", delay: " + delay + ")");
-        if ((show == null || show) && mScreenOn
+        if (show && mScreenOn
                 && mPhoneStatusBar.getBarState() == StatusBarState.KEYGUARD
                 && !mPhoneStatusBar.isKeyguardFadingAway()
                 && !mPhoneStatusBar.isGoingToNotificationShade()
                 && !mPhoneStatusBar.isInLaunchTransition()
                 && !mPhoneStatusBar.isQsExpanded()
                 && mPhoneStatusBar.getCurrentMediaNotificationKey() != null
-                && mStack.getActivatedChild() == null) {
-            if (show == null) {
-                // be a little more aggresive when we're unsure of what to expect
-                if (!mMediaMonitor.isAnythingPlaying()) {
-                    return;
-                }
-                if (mTouching) {
-                    mHandler.postDelayed(mResumeVisualizerIfPlayingRunnable, 500);
-                    return;
-                }
-            }
-
+                && mStack.getActivatedChild() == null
+                ) {
             if (DEBUG) Log.d(TAG, "--> starting visualizer");
             mHandler.postDelayed(mStartVisualizer, delay);
-        } else if ((show == null || !show)) {
+        } else if (!show) {
             if (DEBUG) Log.d(TAG, "--> stopping visualizer");
             mHandler.postDelayed(mStopVisualizer, delay);
         }
@@ -264,32 +247,8 @@ public class BackDropView extends FrameLayout {
         public void run() {
             if (DEBUG) Log.w(TAG, "mStartVisualizer");
 
-            mHandler.removeCallbacks(mStartVisualizer);
-
-            mVisualizer.animate().cancel();
             mVisualizer.animate()
                     .alpha(1f)
-                    .setListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                            mAnimatingOn = true;
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            mAnimatingOn = false;
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-                            mAnimatingOn = false;
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
-
-                        }
-                    })
                     .setDuration(VISUALIZER_ANIMATION_DURATION_IN);
             AsyncTask.execute(mLinkVisualizerRunnable);
         }
@@ -300,13 +259,10 @@ public class BackDropView extends FrameLayout {
         public void run() {
             if (DEBUG) Log.w(TAG, "mStopVisualizer");
 
-            mHandler.removeCallbacks(mStopVisualizer);
-
-            mVisualizer.animate().cancel();
             mVisualizer.animate()
                     .alpha(0f)
                     .setDuration(VISUALIZER_ANIMATION_DURATION_OUT);
-            AsyncTask.execute(mUnLinkVisualizerRunnable);
+            AsyncTask.execute(mUninkVisualizerRunnable);
         }
     };
 
@@ -320,7 +276,7 @@ public class BackDropView extends FrameLayout {
         }
     };
 
-    private final Runnable mUnLinkVisualizerRunnable = new Runnable() {
+    private final Runnable mUninkVisualizerRunnable = new Runnable() {
         @Override
         public void run() {
             if (mVisualizer != null && mLinked) {
@@ -333,9 +289,8 @@ public class BackDropView extends FrameLayout {
     private Runnable mResumeVisualizerIfPlayingRunnable = new Runnable() {
         @Override
         public void run() {
-            if (DEBUG) Log.i(TAG, "mResumeVisualizerIfPlayingRunnable");
             if (mMediaMonitor.isAnythingPlaying()) {
-                requestVisualizer(null, 250);
+                requestVisualizer(true, 250);
             }
         }
     };
@@ -355,7 +310,7 @@ public class BackDropView extends FrameLayout {
                 @Override
                 public void onScreenTurnedOff(int why) {
                     mScreenOn = false;
-                    requestVisualizer(false, 0);
+                    haltVisualizer();
                 }
 
                 @Override
@@ -438,9 +393,7 @@ public class BackDropView extends FrameLayout {
                 //
                 mDrawEmpty = true;
             }
-
-            // if the 'on' animation is currently running, then always draw
-            if (mDrawEmpty && !mAnimatingOn) {
+            if (mDrawEmpty) {
                 mVisualizer.setDrawingEnabled(false);
             } else {
                 mVisualizer.setDrawingEnabled(true);
