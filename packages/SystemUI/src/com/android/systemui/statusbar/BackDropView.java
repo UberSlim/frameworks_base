@@ -16,10 +16,6 @@
 
 package com.android.systemui.statusbar;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -31,8 +27,6 @@ import android.widget.FrameLayout;
 public class BackDropView extends FrameLayout
 {
     private Runnable mOnVisibilityChangedRunnable;
-    private LockscreenBarEqRenderer mBarRenderer;
-    private ValueAnimator mVisualizerColorAnimator;
 
     public BackDropView(Context context) {
         super(context);
