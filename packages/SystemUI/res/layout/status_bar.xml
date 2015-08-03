@@ -68,6 +68,15 @@
                     android:src="@drawable/stat_notify_more"
                     android:visibility="gone"
                     />
+                <com.android.systemui.statusbar.widget.CarrierLabel
+                    android:id="@+id/status_bar_carrier_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.StatusBar.CarrierLabel"
+                    android:singleLine="true"
+                    android:ellipsize="end"/>
+
                 <com.android.systemui.statusbar.phone.IconMerger android:id="@+id/notificationIcons"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -82,6 +91,13 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             >
+
+ 	<com.android.systemui.statusbar.policy.NetworkTraffic
+                android:id="@+id/networkTraffic"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:singleLine="false"
+                android:gravity="right|center_vertical"/>
 
             <include layout="@layout/system_icons" />
 
@@ -132,5 +148,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
+
+    <com.android.systemui.statusbar.policy.BatteryBarController
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:visibility="gone"
+        systemui:viewLocation="1" />
 
 </com.android.systemui.statusbar.phone.PhoneStatusBarView>
