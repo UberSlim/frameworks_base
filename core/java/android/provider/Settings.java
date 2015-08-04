@@ -3774,6 +3774,12 @@ public final class Settings {
         public static final String RECENTS_MAX_APPS = "recents_max_apps";
 
         /**
+         * Display second in the Clock
+         * @hide
+         */
+        public static final String CLOCK_USE_SECOND = "clock_use_second";
+
+        /**
          * Whether recent panel gravity is left or right (default = Gravity.RIGHT).
          * @hide
          */
@@ -3781,6 +3787,11 @@ public final class Settings {
 
         /**
          * Size of recent panel view in percent (default = 100).
+         * Style of clock
+         * 0 - Hide Clock
+         * 1 - Right Clock
+         * 2 - Center Clock
+         * 3 - Left Clock
          * @hide
          */
         public static final String RECENT_PANEL_SCALE_FACTOR = "recent_panel_scale_factor";
@@ -3930,6 +3941,12 @@ public final class Settings {
          */
         public static final String DIALER_OPENCNAM_ACCOUNT_SID = "dialer_opencnam_account_sid";
 
+		/**
+         * Settings for clock font style
+         * @hide
+         */
+        public static final String STATUSBAR_CLOCK_FONT_STYLE = "statusbar_clock_font_style";
+
         /**
          * The OpenCNAM authentication token
          *
@@ -3970,6 +3987,13 @@ public final class Settings {
          * @hide
          */
         public static final String NETWORK_TRAFFIC_HIDE_ARROW = "network_traffic_hide_arrow";
+ 
+         /**
+         * Height of the gesture anywhere trigger.
+         * Force expanded notifications on all apps that support it.
+         * @hide
+         */
+        public static final String FORCE_EXPANDED_NOTIFICATIONS = "force_expanded_notifications";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -5031,6 +5055,12 @@ public final class Settings {
          * <p>0 = do not allow use of the package installer
          */
         public static final String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
+
+        /**
+         * Long press on lock screen lock icon to sleep
+         * @hide
+         */
+        public static final String LONG_PRESS_LOCK_ICON_TO_SLEEP = "long_press_lock_icon_to_sleep";
 
         /**
          * Comma-separated list of location providers that activities may access. Do not rely on
@@ -6783,6 +6813,24 @@ public final class Settings {
         public static final String POWER_SOUNDS_ENABLED = "power_sounds_enabled";
 
         /**
+         * Whether to sound when charger power is connected/disconnected
+         * @hide
+         */
+        public static final String POWER_NOTIFICATIONS_ENABLED = "power_notifications_enabled";
+
+        /**
+         * Whether to vibrate when charger power is connected/disconnected
+         * @hide
+         */
+        public static final String POWER_NOTIFICATIONS_VIBRATE = "power_notifications_vibrate";
+
+        /**
+         * URI for power notification sounds
+         * @hide
+         */
+        public static final String POWER_NOTIFICATIONS_RINGTONE = "power_notifications_ringtone";
+
+        /**
          * URI for the "wireless charging started" sound.
          * @hide
          */
@@ -8287,6 +8335,9 @@ public final class Settings {
             AUTO_TIME,
             AUTO_TIME_ZONE,
             POWER_SOUNDS_ENABLED,
+            POWER_NOTIFICATIONS_ENABLED,
+            POWER_NOTIFICATIONS_VIBRATE,
+            POWER_NOTIFICATIONS_RINGTONE,
             DOCK_SOUNDS_ENABLED,
             USB_MASS_STORAGE_ENABLED,
             ENABLE_ACCESSIBILITY_GLOBAL_GESTURE_ENABLED,
