@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.UserHandle;
+import android.os.PowerManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telecom.TelecomManager;
@@ -100,6 +101,10 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
     private final TrustDrawable mTrustDrawable;
     private final Interpolator mLinearOutSlowInInterpolator;
     private int mLastUnlockIconRes = 0;
+
+    private boolean mLongClickToForceLock;
+    private boolean mLongClickToSleep;
+    private PowerManager mPm;
 
     public KeyguardBottomAreaView(Context context) {
         this(context, null);
