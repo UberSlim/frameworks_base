@@ -3595,6 +3595,13 @@ public final class Settings {
         public static final String PIE_BUTTON_ALPHA = "pie_button_alpha";
 
         /**
+         * Three Finger Gesture from Oppo
+         *
+         * @hide
+         */
+        public static final String THREE_FINGER_GESTURE = "three_finger_gesture";
+
+        /**
          * Pie button pressed and long pressed alpha
          * @hide
          */
