@@ -189,4 +189,7 @@
   <java-symbol type="id" name="image2" />
   <java-symbol type="id" name="image3" />
 
+  <!-- PlatLogo -->
+  <java-symbol type="drawable" name="slim_platlogo" />
+
 </resources>
